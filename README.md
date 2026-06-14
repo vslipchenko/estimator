@@ -1,9 +1,38 @@
 # estimator
 
+*Grounded, explainable Jira story-point estimates — learned from your team's own resolved tickets.*
+
 Estimate Jira tickets from your team's actual history. The plugin pulls resolved
 tickets via the Atlassian MCP to build a baseline dataset, then uses it to
 suggest effort / story-point estimates for new work by comparing it to similar
 past tickets.
+
+## Install
+
+```bash
+# register the marketplace, then install the plugin
+claude plugin marketplace add vslipchenko/estimator
+claude plugin install estimator@vslipchenko
+```
+
+Then restart Claude Code. The plugin needs the **Atlassian (Jira) MCP** connected
+(run `/mcp` to check). Repository: <https://github.com/vslipchenko/estimator>.
+
+## Skills & commands at a glance
+
+| Invoke | What it does |
+|---|---|
+| `sync` | Build / refresh the history dataset from resolved, estimated Jira tickets. |
+| `estimate` | Suggest story points for a ticket from similar past work, then record the outcome. |
+| `add` | Add specific tickets by key (one or many) to the history. |
+| `find` | Look up stored records by key. |
+| `edit` | Correct fields of, or delete, stored records. |
+| `export` / `import` | Back up the dataset / load an existing one (merge or replace). |
+| `/estimator:prune` | Scan for and delete broken records (after confirmation). |
+| `/estimator:reset` | Delete the stored dataset. |
+
+Skills (`sync`, `estimate`, `add`, `find`, `edit`, `export`, `import`) respond to
+natural language; `prune` and `reset` are slash commands.
 
 ## Getting started
 
@@ -11,8 +40,10 @@ Run the `sync` skill to build your estimation baseline — and re-run it any tim
 to top up new or missing tickets:
 
 - Verifies the Atlassian MCP is connected.
-- Asks for the project key(s) and time window, then builds and confirms a JQL
-  query for resolved, estimated tickets.
+- Asks for the project key(s) and how to scope the fetch — a **time window**
+  and/or the **latest N** tickets — and, on the first run, a **minimum
+  story-points** filter, then builds and confirms a JQL query for resolved,
+  estimated tickets.
 - Detects your site's "Story Points" custom field.
 - Fetches the matching tickets (including parent, all comments, and a design
   link where available) and writes them to a CSV dataset.
@@ -92,6 +123,16 @@ of `history.csv`:
   issue type) so you can repair them with the `edit` skill; flagged rows are
   never deleted.
 
+## Load existing history (import)
+
+Already have a history CSV — from `/estimator:export`, another machine, or a
+teammate? Ask Claude to *"import my history from `<path>`"*. The `import` skill
+reads the file and either **merges** it into your dataset (dedup by key, imported
+wins) or **replaces** it (with explicit confirmation). It maps columns by their
+header tokens — tolerant of reordered columns and legacy 12-column files — derives
+your `project_keys`, and reports what changed. It's the counterpart to `export`,
+and lets you start from an existing dataset without running `/sync`.
+
 ## Where data is stored
 
 The dataset lives in a per-user folder in your home directory:
@@ -125,3 +166,7 @@ project.
 - For CSV assembly the plugin uses, in order of preference, Python 3, then
   Node.js; if neither is available it falls back to building the CSV directly.
   No third-party packages are required.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
