@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/vslipchenko-estimator-badge.png)](https://mseep.ai/app/vslipchenko-estimator)
+
 # estimator
 
 *Grounded, explainable Jira story-point estimates — learned from your team's own resolved tickets.*
